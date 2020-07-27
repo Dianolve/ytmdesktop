@@ -1,5 +1,5 @@
 const clientId = '495666957501071390'
-const RPC = require('discord-rpc')
+/*const RPC = require('discord-rpc')
 const startTimestamp = new Date()
 var client
 
@@ -62,7 +62,46 @@ function setActivity(info) {
                 console.log(err)
             })
     }
+}*/
+
+const Discord = require('discord-game')
+
+const isRequireDiscord = true
+Discord.create(clientId, isRequireDiscord).then(_setIsStarted(true))
+
+const activity = {
+    details: info.track.title,
+    state: info.track.author,
+    assets: {
+        largeImage: 'ytm_logo_512',
+        samllImage: info.player.isPaused
+            ? 'discordrpc-pause'
+            : 'discordrpc-play',
+    },
+    timestamps: {
+        startAt: now + info.player.seekbarCurrentPosition * 1000,
+        endAt:
+            now +
+            (info.track.duration - info.player.seekbarCurrentPosition) * 1000,
+    },
+    secrets: {
+        match: 'match',
+        join: 'join',
+        spectate: 'spectate',
+    },
+    party: {
+        id: 'id',
+        currentSize: 1,
+        maxSize: 5,
+    },
 }
+Discord.Activity.update(activity).then(function () {
+    console.log('Rich Presence updated')
+})
+
+setInterval(function () {
+    Discord.runCallback()
+}, 1000 / 60)
 
 module.exports = {
     isStarted: isStarted,
